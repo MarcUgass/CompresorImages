@@ -24,7 +24,7 @@ public class RawImage {
         images.add("n1_GRAY.1_2560_2048_1_0_8_0_0_0"); //7,42 bps
         images.add("n1_RGB.3_2560_2048_1_0_8_0_0_0");
 
-        String file_image = images.getFirst();
+        String file_image = images.get(0);
 
 
         String[] parameters_raw = file_image.split("\\.");
@@ -73,7 +73,7 @@ public class RawImage {
             }
 
             ByteBuffer byteBuffer = ByteBuffer.wrap(buffer); // Crear un objecte ByteBuffer amb el buffer
-            byteBuffer.order(ByteOrder.LITTLE_ENDIAN); // Establir el byte order del ByteBuffer, sempre ha de ser aquest ordre
+            byteBuffer.order(ByteOrder.BIG_ENDIAN); // Establir el byte order del ByteBuffer, sempre ha de ser aquest ordre
 
             int index = 0;
             for (int i = 0; i < components; i++) {
@@ -110,10 +110,12 @@ public class RawImage {
         return matriu;
     }
 
-
+    /*
     public static double calcularEntropia(int[][][] matriu_imatge){
         Map<Integer, Integer>
     }
+    */
+
 
 }
 
