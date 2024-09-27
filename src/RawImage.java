@@ -112,7 +112,7 @@ public class RawImage {
 
     public static double calcularEntropia(int[][][] matriu_imatge){
         Map<Integer, Integer> entropia = new HashMap<>();
-
+        //hola
         return entropia;
     }
 
