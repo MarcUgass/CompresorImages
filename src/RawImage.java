@@ -21,7 +21,7 @@ public class RawImage {
         images.add("aviris_yellowstone_f060925t01p00r12_sc00_cal.224_512_677_3_0_16_0_0_0");
         images.add("Landsat_agriculture.6_1024_1024_2_0_16_0_0_0");
         images.add("mamo_1.1_3576_2944_2_0_12_0_0_0");
-        images.add("n1_GRAY.1_2560_2048_1_0_8_0_0_0");
+        images.add("n1_GRAY.1_2560_2048_1_0_8_0_0_0"); //7,42 bps
         images.add("n1_RGB.3_2560_2048_1_0_8_0_0_0");
 
         String file_image = images.getFirst();
@@ -112,7 +112,7 @@ public class RawImage {
 
 
     public static double calcularEntropia(int[][][] matriu_imatge){
-
+        Map<Integer, Integer>
     }
 
 }
@@ -140,3 +140,18 @@ public class RawImage {
     print("Compressor d'imatges")
 
 */
+
+
+/*
+sessió 2 (27/09/2024)
+implementar un output file (string) per guardar qualsevol matriu en un output.raw(string)
+fer un diff per saber si està bé
+void LoadFile
+void SaveFile(Image[][][], int bytes_per_sample, int signe, string path) int 32 bits
+                       1--> 8bits
+                       2--> 16bits
+float Entropy(int image)
+int [][][] Quantization(int[][][]image, int qstep, int direction)
+
+
+ */
