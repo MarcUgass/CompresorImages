@@ -17,14 +17,14 @@ public class RawImage {
         List<String> images = new ArrayList<>();
 
         images.add("03508649.1_512_512_2_0_12_0_0_0.raw");
-        images.add("03508649.64_512_512_2_0_12_0_0_0");
-        images.add("aviris_yellowstone_f060925t01p00r12_sc00_cal.224_512_677_3_0_16_0_0_0");
-        images.add("Landsat_agriculture.6_1024_1024_2_0_16_0_0_0");
-        images.add("mamo_1.1_3576_2944_2_0_12_0_0_0");
-        images.add("n1_GRAY.1_2560_2048_1_0_8_0_0_0"); //7,42 bps
-        images.add("n1_RGB.3_2560_2048_1_0_8_0_0_0");
+        images.add("03508649.64_512_512_2_0_12_0_0_0.raw");
+        images.add("aviris_yellowstone_f060925t01p00r12_sc00_cal.224_512_677_3_0_16_0_0_0.raw");
+        images.add("Landsat_agriculture.6_1024_1024_2_0_16_0_0_0.raw");
+        images.add("mamo_1.1_3576_2944_2_0_12_0_0_0.raw");
+        images.add("n1_GRAY.1_2560_2048_1_0_8_0_0_0.raw"); //7,42 bps
+        images.add("n1_RGB.3_2560_2048_1_0_8_0_0_0.raw");
 
-        String file_image = images.get(0);
+        String file_image = images.getFirst();
 
 
         String[] parameters_raw = file_image.split("\\.");
