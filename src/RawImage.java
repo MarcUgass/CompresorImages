@@ -18,6 +18,7 @@ public class RawImage {
 
         images.add("03508649.1_512_512_2_0_12_0_0_0.raw");
         images.add("03508649.64_512_512_2_0_12_0_0_0.raw");
+
         images.add("aviris_yellowstone_f060925t01p00r12_sc00_cal.224_512_677_3_0_16_0_0_0.raw");
         images.add("Landsat_agriculture.6_1024_1024_2_0_16_0_0_0.raw");
         images.add("mamo_1.1_3576_2944_2_0_12_0_0_0.raw");
