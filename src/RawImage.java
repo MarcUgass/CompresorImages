@@ -60,7 +60,6 @@ public class RawImage {
         int[][][] matrixImg = generateMatrix(file, files, columnes, components, bytes_sample, isUnsigned);
     }
 
-    //Format int es invalid ja que estem utilitzant valors d'entre 1-2 bytes, perdent molta cpacitat, --> preguntat Joan
     public static int[][][] generateMatrix(File arxiu, int files, int columns, int components, int bytes_sample, boolean isUnsigned) {
         int[][][] matriu = new int[components][files][columns]; // Crear una matriu de 3 dimensions
 
@@ -86,7 +85,7 @@ public class RawImage {
                             if (isUnsigned) {
                                 value = Byte.toUnsignedInt(b); //Si es unsigned, convertim al rang [0,255]
                             } else {
-                                value = b; // Si es signed, Java ho interpreta correctament en [-128, 127] -->perque?? pregunta joan
+                                value = b; // Si es signed, Java ho interpreta correctament en [-128, 127]
                             }
                         } else if (bytes_sample == 2) {
                             //Si son 2 bytes es un short
