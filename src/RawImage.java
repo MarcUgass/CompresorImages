@@ -110,7 +110,14 @@ public class RawImage {
         return matriu;
     }
 
+
+    public static double calcularEntropia(int[][][] matriu_imatge){
+
+    }
+
 }
+
+
 
 
 
