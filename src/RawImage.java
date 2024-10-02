@@ -1,32 +1,26 @@
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
-import java.io.FileNotFoundException;
 import java.nio.ByteOrder;
-import java.nio.file.*;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 
 public class RawImage {
-    public static void LoadImage() {
+    public static void LoadImage() throws IOException {
         List<String> images = new ArrayList<>();
 
         images.add("03508649.1_512_512_2_0_12_0_0_0.raw");
         images.add("03508649.64_512_512_2_0_12_0_0_0.raw");
-
         images.add("aviris_yellowstone_f060925t01p00r12_sc00_cal.224_512_677_3_0_16_0_0_0.raw");
         images.add("Landsat_agriculture.6_1024_1024_2_0_16_0_0_0.raw");
         images.add("mamo_1.1_3576_2944_2_0_12_0_0_0.raw");
         images.add("n1_GRAY.1_2560_2048_1_0_8_0_0_0.raw"); //7,42 bps
         images.add("n1_RGB.3_2560_2048_1_0_8_0_0_0.raw");
 
-        String file_image = images.getFirst();
-
+        String file_image = images.get(5);
 
         String[] parameters_raw = file_image.split("\\.");
         String[] parameters = parameters_raw[1].split("_");
@@ -55,10 +49,11 @@ public class RawImage {
             default -> true;
         };
 
-
         String path = "./imatges/" + file_image;
         File file = new File(path); // Crear un objecte File amb el path
         int[][][] matrixImg = generateMatrix(file, files, columnes, components, bytes_sample, isUnsigned);
+        float entropia = calcularEntropia(matrixImg);
+
     }
 
     public static int[][][] generateMatrix(File arxiu, int files, int columns, int components, int bytes_sample, boolean isUnsigned) {
@@ -76,10 +71,10 @@ public class RawImage {
             byteBuffer.order(ByteOrder.BIG_ENDIAN); // Establir el byte order del ByteBuffer, sempre ha de ser aquest ordre
 
             int index = 0;
+            int value = 0;
             for (int i = 0; i < components; i++) {
                 for (int j = 0; j < files; j++) {
                     for (int k = 0; k < columns; k++) {
-                        int value;
                         if (bytes_sample == 1) {
                             //Si es un byte s'utilitza el format byte, ja que ocupa menys que int
                             byte b = byteBuffer.get(index);
@@ -96,31 +91,45 @@ public class RawImage {
                             } else {
                                 value = s; //Si es signed, ja està al rang correcte [-32768, 32767]
                             }
-
-                            matriu[i][j][k] = value;
-                            index += bytes_sample;
                         }
+                        matriu[i][j][k] = value;
+                        index += bytes_sample;
                     }
                 }
             }
-
         } catch (IOException e) { // Capturar una excepció d'entrada/sortida
             throw new RuntimeException(e); // Llençar una nova excepció
         }
         return matriu;
     }
 
+    public static float calcularEntropia(int[][][] matriu_imatge) {
+        float entropia = 0;
+        int value = 0;
+        //Crear un HashMap per guardar la freqüència de cada valor
+        HashMap<Integer, Integer> frequencyMap = new HashMap<>();
+        int totalPixels = 0;
+        for (int i = 0; i < matriu_imatge.length; i++) {
+            for (int j = 0; j < matriu_imatge[i].length; j++) {
+                for (int k = 0; k < matriu_imatge[i][j].length; k++) {
+                    value = matriu_imatge[i][j][k];
+                    //Si el valor no existeix crea una posicio amb
+                    frequencyMap.put(value, frequencyMap.getOrDefault(value, 0) + 1); //crear un histograma automàticament
+                    totalPixels++;
+                }
+            }
+        }
 
-    public static double calcularEntropia(int[][][] matriu_imatge){
-        Map<Integer, Integer> entropia = new HashMap<>();
-        //holaw
+        //Calcular la entropia
+        for (int key : frequencyMap.keySet()) {
+            float probability = (float) frequencyMap.get(key) / totalPixels;
+            entropia += (float) (probability * (Math.log(probability)) / Math.log(2));
+            System.out.println("Key: " + key + " Value: " + frequencyMap.get(key) + " Probability: " + probability);
+            System.out.println("Entropy: " + entropia);
+        }
+
         return entropia;
     }
-
-
-
-
-
 }
 
 
@@ -158,6 +167,4 @@ void SaveFile(Image[][][], int bytes_per_sample, int signe, string path) int 32 
                        2--> 16bits
 float Entropy(int image)
 int [][][] Quantization(int[][][]image, int qstep, int direction)
-
-
  */
