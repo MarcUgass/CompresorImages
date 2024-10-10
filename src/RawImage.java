@@ -17,7 +17,7 @@ public class RawImage {
         images.add("aviris_yellowstone_f060925t01p00r12_sc00_cal.224_512_677_3_0_16_0_0_0.raw");
         images.add("Landsat_agriculture.6_1024_1024_2_0_16_0_0_0.raw");
         images.add("mamo_1.1_3576_2944_2_0_12_0_0_0.raw");
-        images.add("n1_GRAY.1_2560_2048_1_0_8_0_0_0.raw"); //7,42 bps
+        images.add("n1_GRAY.1_2560_2048_1_0_8_0_0_0.raw"); //Entropia = 7,42 bps
         images.add("n1_RGB.3_2560_2048_1_0_8_0_0_0.raw");
 
         String file_image = images.get(5);
@@ -28,6 +28,7 @@ public class RawImage {
         int files = Integer.parseInt(parameters[1]);
         int columnes = Integer.parseInt(parameters[2]);
         int components = Integer.parseInt(parameters[0]);
+        int qstep = 3;
 
         int bytes_sample = 0;
         boolean isUnsigned = switch (Integer.parseInt(parameters[3])) {
@@ -53,6 +54,14 @@ public class RawImage {
         File file = new File(path); // Crear un objecte File amb el path
         int[][][] matrixImg = generateMatrix(file, files, columnes, components, bytes_sample, isUnsigned);
         float entropia = calcularEntropia(matrixImg);
+        System.out.println("Entropy 1: " + entropia);
+
+        //boolean guardado = SaveFile(matrixImg, bytes_sample, isUnsigned);
+        int[][][] matrixCuantizada = Cuantizacion(matrixImg, qstep);
+        float entropia2 = calcularEntropia(matrixCuantizada);
+        System.out.println("Entropy 2: " + entropia2);
+
+
 
     }
 
@@ -124,17 +133,66 @@ public class RawImage {
         for (int key : frequencyMap.keySet()) {
             float probability = (float) frequencyMap.get(key) / totalPixels;
             entropia += (float) (probability * (Math.log(probability)) / Math.log(2));
-            System.out.println("Key: " + key + " Value: " + frequencyMap.get(key) + " Probability: " + probability);
-            System.out.println("Entropy: " + entropia);
+            //System.out.println("Key: " + key + " Value: " + frequencyMap.get(key) + " Probability: " + probability);
+            //System.out.println("Entropy: " + entropia);
         }
 
+        entropia = entropia * -1;
         return entropia;
     }
+
+    public static boolean SaveFile(int[][][] matriu, int bytes_per_sample, boolean signe) throws IOException {
+        String path = "./imatges/output.raw";
+        File file = new File(path);
+        ByteBuffer byteBuffer = ByteBuffer.allocate(matriu.length * matriu[0].length * matriu[0][0].length * bytes_per_sample);
+        byteBuffer.order(ByteOrder.BIG_ENDIAN);
+
+        for (int i = 0; i < matriu.length; i++) {
+            for (int j = 0; j < matriu[i].length; j++) {
+                for (int k = 0; k < matriu[i][j].length; k++) {
+                    if (bytes_per_sample == 1) {
+                        if (signe) {
+                            byteBuffer.put((byte) matriu[i][j][k]);
+                        } else {
+                            byteBuffer.put((byte) (matriu[i][j][k] & 0xFF)); // 0xFF = 255
+                        }
+                    } else if (bytes_per_sample == 2) {
+                        if (signe) {
+                            byteBuffer.putShort((short) matriu[i][j][k]);
+                        } else {
+                            byteBuffer.putShort((short) (matriu[i][j][k] & 0xFFFF));
+                        }
+                    }
+                }
+            }
+        }
+
+        byte[] buffer = byteBuffer.array();
+        try {
+            java.nio.file.Files.write(file.toPath(), buffer);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+      return file.exists();
+    }
+
+    public static int[][][] Cuantizacion(int[][][] matriu, int qstep) {
+        int[][][] matriz_cuantizada = new int[matriu.length][matriu[0].length][matriu[0][0].length];
+
+        for (int i = 0; i < matriu.length; i++) {
+            for (int j = 0; j < matriu[i].length; j++) {
+                for (int k = 0; k < matriu[i][j].length; k++) {
+                    matriz_cuantizada[i][j][k] = matriu[i][j][k] / qstep;
+                    matriz_cuantizada[i][j][k] = matriz_cuantizada[i][j][k] * qstep;
+
+                }
+            }
+        }
+        return matriz_cuantizada;
+    }
+
 }
-
-
-
-
 
 
 /*'''int img [][][] = LoadImatge(fitxer_imatge, files, columnes, components, bytes_sample, signed/unsigned)
@@ -156,15 +214,34 @@ public class RawImage {
 
 */
 
+/*
+Implementar un archivo de salida (string) para guardar cualquier matriz en un output.raw(string).
+
+Hacer una comparación (diff) para verificar si está bien.
+
+void LoadFile;
+
+void SaveFile(Image[][][], int bytes_per_sample, int signo, string path); // int 32 bits
+                       // 1 --> 8 bits
+                       // 2 --> 16 bits
+
+float Entropy(int image);
+
+int [][][] Quantization(int[][][] image, int qstep, int direction);
+*/
 
 /*
 sessió 2 (27/09/2024)
-implementar un output file (string) per guardar qualsevol matriu en un output.raw(string)
+implementar un output file (string) per guardar qualsevol matriu en un output.raw(string)+
+
 fer un diff per saber si està bé
+
 void LoadFile
+
 void SaveFile(Image[][][], int bytes_per_sample, int signe, string path) int 32 bits
                        1--> 8bits
                        2--> 16bits
 float Entropy(int image)
+
 int [][][] Quantization(int[][][]image, int qstep, int direction)
  */
