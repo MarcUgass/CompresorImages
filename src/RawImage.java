@@ -6,6 +6,7 @@ import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 
 public class RawImage {
@@ -28,7 +29,7 @@ public class RawImage {
         int files = Integer.parseInt(parameters[1]);
         int columnes = Integer.parseInt(parameters[2]);
         int components = Integer.parseInt(parameters[0]);
-        int qstep = 3;
+        int qstep = 15;
 
         int bytes_sample = 0;
         boolean isUnsigned = switch (Integer.parseInt(parameters[3])) {
@@ -50,17 +51,26 @@ public class RawImage {
             default -> true;
         };
 
+        //boolean direccion = true; //true = dividir, false = multiplicar
         String path = "./imatges/" + file_image;
         File file = new File(path); // Crear un objecte File amb el path
         int[][][] matrixImg = generateMatrix(file, files, columnes, components, bytes_sample, isUnsigned);
         float entropia = calcularEntropia(matrixImg);
         System.out.println("Entropy 1: " + entropia);
 
-        //boolean guardado = SaveFile(matrixImg, bytes_sample, isUnsigned);
-        int[][][] matrixCuantizada = Cuantizacion(matrixImg, qstep);
+        int[][][] matrixCuantizada = Cuantizacion(matrixImg, qstep, true);
+        boolean guardado = SaveFile(matrixCuantizada, bytes_sample, isUnsigned);
         float entropia2 = calcularEntropia(matrixCuantizada);
         System.out.println("Entropy 2: " + entropia2);
 
+        int[][][] matrixDescuantizada = Cuantizacion(matrixCuantizada, qstep, false);
+
+        double mse = metricas(matrixImg, matrixDescuantizada, "MSE");
+        System.out.println("MSE: " + mse);
+        double pae = metricas(matrixImg, matrixDescuantizada, "PAE");
+        System.out.println("PAE: " + pae);
+        double psnr = PSNR(matrixImg, matrixDescuantizada);
+        System.out.println("PSNR: " + psnr);
 
 
     }
@@ -132,9 +142,7 @@ public class RawImage {
         //Calcular la entropia
         for (int key : frequencyMap.keySet()) {
             float probability = (float) frequencyMap.get(key) / totalPixels;
-            entropia += (float) (probability * (Math.log(probability)) / Math.log(2));
-            //System.out.println("Key: " + key + " Value: " + frequencyMap.get(key) + " Probability: " + probability);
-            //System.out.println("Entropy: " + entropia);
+            entropia += (float) (probability * (Math.log(probability)) / Math.log(2));;
         }
 
         entropia = entropia * -1;
@@ -151,17 +159,9 @@ public class RawImage {
             for (int j = 0; j < matriu[i].length; j++) {
                 for (int k = 0; k < matriu[i][j].length; k++) {
                     if (bytes_per_sample == 1) {
-                        if (signe) {
                             byteBuffer.put((byte) matriu[i][j][k]);
-                        } else {
-                            byteBuffer.put((byte) (matriu[i][j][k] & 0xFF)); // 0xFF = 255
-                        }
                     } else if (bytes_per_sample == 2) {
-                        if (signe) {
                             byteBuffer.putShort((short) matriu[i][j][k]);
-                        } else {
-                            byteBuffer.putShort((short) (matriu[i][j][k] & 0xFFFF));
-                        }
                     }
                 }
             }
@@ -177,71 +177,73 @@ public class RawImage {
       return file.exists();
     }
 
-    public static int[][][] Cuantizacion(int[][][] matriu, int qstep) {
+    public static int[][][] Cuantizacion(int[][][] matriu, int qstep, boolean direccion) { //1 dividim, 0 multiplicar
         int[][][] matriz_cuantizada = new int[matriu.length][matriu[0].length][matriu[0][0].length];
-
-        for (int i = 0; i < matriu.length; i++) {
-            for (int j = 0; j < matriu[i].length; j++) {
-                for (int k = 0; k < matriu[i][j].length; k++) {
-                    matriz_cuantizada[i][j][k] = matriu[i][j][k] / qstep;
-                    matriz_cuantizada[i][j][k] = matriz_cuantizada[i][j][k] * qstep;
-
+        int signo =  0;
+        if (direccion){
+            for (int i = 0; i < matriu.length; i++) {
+                for (int j = 0; j < matriu[i].length; j++) {
+                    for (int k = 0; k < matriu[i][j].length; k++){
+                        signo = matriu[i][j][k] < 0 ? -1 : 1;
+                        matriz_cuantizada[i][j][k] = (int) (signo * Math.abs(matriu[i][j][k]) / qstep);
+                    }
+                }
+            }
+        } else {
+            for (int i = 0; i < matriu.length; i++) {
+                for (int j = 0; j < matriu[i].length; j++) {
+                    for (int k = 0; k < matriu[i][j].length; k++) {
+                        signo = matriu[i][j][k] < 0 ? -1 : 1;
+                        matriz_cuantizada[i][j][k] = (int) (signo * Math.abs(matriu[i][j][k]) * qstep);
+                    }
                 }
             }
         }
         return matriz_cuantizada;
     }
 
+    public static double metricas(int[][][] mat_org, int[][][] mat_cuant, String metricas) {
+        double valor = 0.0;
+        int totalElements = mat_org.length * mat_org[0].length * mat_org[0][0].length;
+
+        if (mat_org.length == mat_cuant.length) {
+            if ("MSE".equals(metricas)) {
+                for (int i = 0; i < mat_org.length; i++) {
+                    for (int j = 0; j < mat_org[i].length; j++) {
+                        for (int k = 0; k < mat_org[i][j].length; k++) {
+                            valor += Math.pow((mat_org[i][j][k] - mat_cuant[i][j][k]), 2);
+                        }
+                    }
+                }
+                valor /= totalElements; // Dividir pel nombre total de píxels per obtenir el valor de MSE
+            } else if ("PAE".equals(metricas)) {
+                double max = 0;
+                for (int i = 0; i < mat_org.length; i++) {
+                    for (int j = 0; j < mat_org[i].length; j++) {
+                        for (int k = 0; k < mat_org[i][j].length; k++) {
+                            double diff = Math.abs(mat_org[i][j][k] - mat_cuant[i][j][k]);
+                            if (diff > max) {
+                                max = diff;
+                            }
+                        }
+                    }
+                }
+                valor = max;
+            }
+        }
+        return valor;
+    }
+
+    public static double PSNR(int[][][] original, int[][][] comprimit) {
+        double mse = metricas(original, comprimit, "MSE");
+        if (mse == 0) return Double.POSITIVE_INFINITY; // PSNR és infinit si el MSE és zero
+        double max = 255.0;
+        return 10 * Math.log10(Math.pow(max, 2) / mse);
+    }
+
+
+
 }
 
 
-/*'''int img [][][] = LoadImatge(fitxer_imatge, files, columnes, components, bytes_sample, signed/unsigned)
-    --> test print 10 primers i últims samples --> comparar FIJI
 
-    float Entropy(Image)
-
-    raw image--> |------------------
-    parametres imatge
-    operacio
-
-
-    nom_app imatge.raw files columnes components bytes_sample unsigned 1
-    2 3
-    3
-
-    '''
-    print("Compressor d'imatges")
-
-*/
-
-/*
-Implementar un archivo de salida (string) para guardar cualquier matriz en un output.raw(string).
-
-Hacer una comparación (diff) para verificar si está bien.
-
-void LoadFile;
-
-void SaveFile(Image[][][], int bytes_per_sample, int signo, string path); // int 32 bits
-                       // 1 --> 8 bits
-                       // 2 --> 16 bits
-
-float Entropy(int image);
-
-int [][][] Quantization(int[][][] image, int qstep, int direction);
-*/
-
-/*
-sessió 2 (27/09/2024)
-implementar un output file (string) per guardar qualsevol matriu en un output.raw(string)+
-
-fer un diff per saber si està bé
-
-void LoadFile
-
-void SaveFile(Image[][][], int bytes_per_sample, int signe, string path) int 32 bits
-                       1--> 8bits
-                       2--> 16bits
-float Entropy(int image)
-
-int [][][] Quantization(int[][][]image, int qstep, int direction)
- */
