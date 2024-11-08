@@ -10,116 +10,54 @@ import java.util.Objects;
 
 
 public class RawImage {
-    public static void LoadImage() throws IOException {
-        List<String> images = new ArrayList<>();
 
-        images.add("03508649.1_512_512_2_0_12_0_0_0.raw");
-        images.add("03508649.64_512_512_2_0_12_0_0_0.raw");
-        images.add("aviris_yellowstone_f060925t01p00r12_sc00_cal.224_512_677_3_0_16_0_0_0.raw");
-        images.add("Landsat_agriculture.6_1024_1024_2_0_16_0_0_0.raw");
-        images.add("mamo_1.1_3576_2944_2_0_12_0_0_0.raw");
-        images.add("n1_GRAY.1_2560_2048_1_0_8_0_0_0.raw"); //Entropia = 7,42 bps
-        images.add("n1_RGB.3_2560_2048_1_0_8_0_0_0.raw");
+    public RawImage(){}
 
-        String file_image = images.get(5);
+    public static int[][][] LoadImage(File file, int rows, int columns, int components, int bytesPerSample, boolean isUnsigned) {
+        int[][][] matrix = new int[components][rows][columns]; // Create a 3-dimensional matrix
 
-        String[] parameters_raw = file_image.split("\\.");
-        String[] parameters = parameters_raw[1].split("_");
+        try (FileInputStream fis = new FileInputStream(file)) { // Create a FileInputStream object with the file
+            byte[] buffer = new byte[rows * columns * components * bytesPerSample]; // Create a byte buffer
+            int byteRead = fis.read(buffer); // Read bytes from the file and store them in the buffer
 
-        int files = Integer.parseInt(parameters[1]);
-        int columnes = Integer.parseInt(parameters[2]);
-        int components = Integer.parseInt(parameters[0]);
-        int qstep = 15;
-
-        int bytes_sample = 0;
-        boolean isUnsigned = switch (Integer.parseInt(parameters[3])) {
-            //1-> 8 bits
-            case 1 -> {
-                bytes_sample = 1;
-                yield true;
-            }
-            //2-> 16 bits unsigned
-            case 2 -> {
-                bytes_sample = 2; // 2 bytes = 16 bits
-                yield true;
-            }
-            //3-> 16 bits signed
-            case 3 -> {
-                bytes_sample = 2;
-                yield false;
-            }
-            default -> true;
-        };
-
-        //boolean direccion = true; //true = dividir, false = multiplicar
-        String path = "./imatges/" + file_image;
-        File file = new File(path); // Crear un objecte File amb el path
-        int[][][] matrixImg = generateMatrix(file, files, columnes, components, bytes_sample, isUnsigned);
-        float entropia = calcularEntropia(matrixImg);
-        System.out.println("Entropy 1: " + entropia);
-
-        int[][][] matrixCuantizada = Cuantizacion(matrixImg, qstep, true);
-        boolean guardado = SaveFile(matrixCuantizada, bytes_sample, isUnsigned);
-        float entropia2 = calcularEntropia(matrixCuantizada);
-        System.out.println("Entropy 2: " + entropia2);
-
-        int[][][] matrixDescuantizada = Cuantizacion(matrixCuantizada, qstep, false);
-
-        double mse = metricas(matrixImg, matrixDescuantizada, "MSE");
-        System.out.println("MSE: " + mse);
-        double pae = metricas(matrixImg, matrixDescuantizada, "PAE");
-        System.out.println("PAE: " + pae);
-        double psnr = PSNR(matrixImg, matrixDescuantizada);
-        System.out.println("PSNR: " + psnr);
-
-
-    }
-
-    public static int[][][] generateMatrix(File arxiu, int files, int columns, int components, int bytes_sample, boolean isUnsigned) {
-        int[][][] matriu = new int[components][files][columns]; // Crear una matriu de 3 dimensions
-
-        try (FileInputStream fis = new FileInputStream(arxiu)) { // Crear un objecte FileInputStream amb l'arxiu
-            byte[] buffer = new byte[files * columns * components * bytes_sample]; // Crear un buffer de bytes
-            int byteRead = fis.read(buffer); // Llegir els bytes de l'arxiu i guardar-los al buffer
-
-            if (byteRead != buffer.length) { // Comprovar que s'han llegit tots els bytes
-                throw new IOException("Different file size"); // Llençar una excepció si no s'han llegit tots els bytes
+            if (byteRead != buffer.length) { // Check that all bytes were read
+                throw new IOException("Different file size"); // Throw an exception if not all bytes were read
             }
 
-            ByteBuffer byteBuffer = ByteBuffer.wrap(buffer); // Crear un objecte ByteBuffer amb el buffer
-            byteBuffer.order(ByteOrder.BIG_ENDIAN); // Establir el byte order del ByteBuffer, sempre ha de ser aquest ordre
+            ByteBuffer byteBuffer = ByteBuffer.wrap(buffer); // Create a ByteBuffer object with the buffer
+            byteBuffer.order(ByteOrder.BIG_ENDIAN); // Set the byte order of ByteBuffer, always should be this order
 
             int index = 0;
             int value = 0;
             for (int i = 0; i < components; i++) {
-                for (int j = 0; j < files; j++) {
+                for (int j = 0; j < rows; j++) {
                     for (int k = 0; k < columns; k++) {
-                        if (bytes_sample == 1) {
-                            //Si es un byte s'utilitza el format byte, ja que ocupa menys que int
+                        if (bytesPerSample == 1) {
+                            // If it's one byte, use the byte format as it takes less space than int
                             byte b = byteBuffer.get(index);
                             if (isUnsigned) {
-                                value = Byte.toUnsignedInt(b); //Si es unsigned, convertim al rang [0,255]
+                                value = Byte.toUnsignedInt(b); // If unsigned, convert to range [0,255]
                             } else {
-                                value = b; // Si es signed, Java ho interpreta correctament en [-128, 127]
+                                value = b; // If signed, Java interprets it correctly in [-128, 127]
                             }
-                        } else if (bytes_sample == 2) {
-                            //Si son 2 bytes es un short
+                        } else if (bytesPerSample == 2) {
+                            // If two bytes, it's a short
                             short s = byteBuffer.getShort(index);
                             if (isUnsigned) {
-                                value = Short.toUnsignedInt(s); //Si es unsigned, convertim al rang [0,65535]
+                                value = Short.toUnsignedInt(s); // If unsigned, convert to range [0,65535]
                             } else {
-                                value = s; //Si es signed, ja està al rang correcte [-32768, 32767]
+                                value = s; // If signed, it's already in the correct range [-32768, 32767]
                             }
                         }
-                        matriu[i][j][k] = value;
-                        index += bytes_sample;
+                        matrix[i][j][k] = value;
+                        index += bytesPerSample;
                     }
                 }
             }
-        } catch (IOException e) { // Capturar una excepció d'entrada/sortida
-            throw new RuntimeException(e); // Llençar una nova excepció
+        } catch (IOException e) { // Catch an input/output exception
+            throw new RuntimeException(e); // Throw a new exception
         }
-        return matriu;
+        return matrix;
     }
 
     public static float calcularEntropia(int[][][] matriu_imatge) {

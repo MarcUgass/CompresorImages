@@ -73,7 +73,20 @@ Relacionar:
 - PAE, QSTEP
 - PAE, H(X)
 
-
 Profe:
 modificar la organitzacio codi
 divisio de quantitzacio es per valor absolut (revisar formula bona), afegir direccio per quantitzar i desquantitzar
+
+************CLASSE 25/10/24****************
+transformada wavelet (mirar foto) forward i backward
+quantitzacio --> transformacio
+o transformacio --> desquantitzacio
+i per tirar enrere, el mateix ordre
+
+RHAAR_FWD(int[] input_vector, int[] output_vector) primero las filas (para hacer la vertical) y luego las columnas para la horizontal
+
+RHAAR_INV(int[] input(que es l'output del fwd), int[] output (que es input de fwd))
+
+**********CLASE 08/11/24****************
+prediccion, fer un predictor per la img de la chica 8 bits para minimizar la entropia de R al maximo que sea reversible
+mirar foto
