@@ -33,24 +33,25 @@ public class ImageLoader {
     this.components = Integer.parseInt(parameters[0]);
 
     this.bytesPerSample = 0;
-    this.isUnsigned = switch (Integer.parseInt(parameters[3])) {
-      //1-> 8 bits
-      case 1 -> {
+    int format = Integer.parseInt(parameters[3]);
+    //1-> 8 bits
+    if (format == 1) {
         this.bytesPerSample = 1;
-        yield true;
-      }
-      //2-> 16 bits unsigned
-      case 2 -> {
-        this.bytesPerSample = 2; // 2 bytes = 16 bits
-        yield true;
-      }
-      //3-> 16 bits signed
-      case 3 -> {
+        this.isUnsigned = true;
+    }
+    //2-> 16 bits unsigned
+    else if (format == 2) {
         this.bytesPerSample = 2;
-        yield false;
-      }
-      default -> true;
-    };
+        this.isUnsigned = true;
+    }
+    //3-> 16 bits signed
+    else if (format == 3) {
+        this.bytesPerSample = 2;
+        this.isUnsigned = false;
+    }
+    else {
+        this.isUnsigned = true;
+    }
 
     //boolean direccion = true; //true = dividir, false = multiplicar
     String path = "./imatges/" + file_image;

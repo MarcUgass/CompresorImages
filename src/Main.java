@@ -1,8 +1,8 @@
-import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
-import java.util.List;
-import java.util.ArrayList;
+//import java.io.File;
+//import java.util.List;
+//import java.util.ArrayList;
 
 
 public class Main {
@@ -35,13 +35,15 @@ public class Main {
 
       int[][][] Actual_Matrix = Original_Matrix;
 
+      Predictor predictor = new Predictor();
+
       // Display of the Menu
       // Display the options menu
       while (true) {
         System.out.println("\nSelect an option:");
         System.out.println("1. Calculate Entropy");
         System.out.println("2. Quantize/Dequantize");
-        System.out.println("3. Apply Predictor");
+        System.out.println("3. Apply Predictor/Inverse Predictor");
         System.out.println("4. Apply Wavelet Transform");
         System.out.println("5. Show metrics");
         System.out.println("6. Save Image");
@@ -70,71 +72,46 @@ public class Main {
 
           case "3":
             // Apply predictor to the image
-            Compressor compressor = new Compressor();
-            Actual_Matrix = compressor.applyPredictorToMatrix(Actual_Matrix);
-            System.out.println("Predictor applied successfully!");
+            System.out.print("Predictor/Inverse Predictor (true/false): "); 
+            boolean predictor_inverse = scanner.nextBoolean();
+            if (predictor_inverse) {
+              Actual_Matrix = predictor.Predcitor2(Actual_Matrix);
+              System.out.println("Predictor applied successfully!");
+            } else {
+              Actual_Matrix = predictor.InversePredictor2(Actual_Matrix);
+              System.out.println("InversePredictor applied successfully!");
+            }
             break;
-          case "4":
-            //WaveletTransform waveletTransform = new WaveletTransform();
-            break;
-          case "5":
-            MetricsCalculator metrics = new MetricsCalculator();
 
-            double mse = metrics.calculateMSE(Original_Matrix, Actual_Matrix);
+          case "4":
+            break;
+
+          case "5":
+            double mse = MetricsCalculator.calculateMSE(Original_Matrix, Actual_Matrix);
             System.out.println("MSE: " + mse);
-            double pae = metrics.calculatePAE(Original_Matrix, Actual_Matrix);
+            double pae = MetricsCalculator.calculatePAE(Original_Matrix, Actual_Matrix);
             System.out.println("PAE: " + pae);
-            double psnr = metrics.calculatePSNR(Original_Matrix, Actual_Matrix);
+            double psnr = MetricsCalculator.calculatePSNR(Original_Matrix, Actual_Matrix);
             System.out.println("PSNR: " + psnr);
             break;
+
           case "6":
             System.out.println("Enter the name of the file to save the image: ");
             String file_name = scanner.nextLine();
             file_name = "./imatges/" + file_name + ".raw";
-            ImageSaver saver = new ImageSaver();
-            boolean saved = saver.saveImage(Actual_Matrix, Original_Image.getBytesPerSample(), Original_Image.isUnsigned(), file_name);
+            boolean saved = ImageSaver.saveImage(Actual_Matrix, Original_Image.getBytesPerSample(), Original_Image.isUnsigned(), file_name);
+            System.out.println("Image saved successfully: " + saved);
+            break;
+
           case "7":
             // Exit the program
             System.out.println("Exiting...");
             scanner.close();
             return;
-
           default:
             System.out.println("Invalid choice, please try again.");
 
         }
-
-
-/*
-      // Prompt for quantization parameters
-      System.out.print("Enter the quantization step size (e.g., 5): ");
-      int qStep = scanner.nextInt();
-      System.out.print("Quantization direction (true for division, false for multiplication): ");
-      boolean divide = scanner.nextBoolean();
-
-      // Perform quantization
-      int[][][] quantizedMatrix = Quantizer.quantize(imageMatrix, qStep, divide);
-      System.out.println("Quantization completed!");
-
-      // Calculate MSE, PSNR, and PAE metrics
-      double mse = MetricsCalculator.calculateMSE(imageMatrix, quantizedMatrix);
-      double psnr = MetricsCalculator.calculatePSNR(imageMatrix, quantizedMatrix);
-      double pae = MetricsCalculator.calculatePAE(imageMatrix, quantizedMatrix);
-
-      System.out.println("MSE: " + mse);
-      System.out.println("PSNR: " + psnr + " dB");
-      System.out.println("PAE: " + pae);
-
-      // Prompt for output file path
-      System.out.print("Enter the path to save the quantized image file: ");
-      scanner.nextLine(); // Consume newline left from previous input
-      String outputPath = scanner.nextLine();
-
-      // Save quantized image
-      boolean saved = ImageSaver.saveImage(quantizedMatrix, bytesPerSample, isUnsigned, outputPath);
-      System.out.println("Image saved successfully: " + saved);
-      */
-         // Close the scanner to free resources
       }
 
     }
