@@ -84,6 +84,17 @@ public class Main {
             break;
 
           case "4":
+            // Apply wavelet transform to the image
+            WaveletTransform waveletTransform = new WaveletTransform();
+            System.out.print("Wavelet Transform/Inverse Wavelet Transform (true/false): ");
+            boolean wavelet_inverse = scanner.nextBoolean();
+            if (wavelet_inverse) {
+              Actual_Matrix = waveletTransform.RHAAR_FWD(Actual_Matrix);
+              System.out.println("Wavelet Transform applied successfully!");
+            } else {
+              Actual_Matrix = waveletTransform.RHAAR_INV(Actual_Matrix);
+              System.out.println("Inverse Wavelet Transform applied successfully!");
+            }
             break;
 
           case "5":
