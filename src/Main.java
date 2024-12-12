@@ -36,6 +36,7 @@ public class Main {
       int[][][] Actual_Matrix = Original_Matrix;
 
       Predictor predictor = new Predictor();
+      WaveletTransform waveletTransform = new WaveletTransform();
 
       // Display of the Menu
       // Display the options menu
@@ -85,14 +86,16 @@ public class Main {
 
           case "4":
             // Apply wavelet transform to the image
-            WaveletTransform waveletTransform = new WaveletTransform();
             System.out.print("Wavelet Transform/Inverse Wavelet Transform (true/false): ");
             boolean wavelet_inverse = scanner.nextBoolean();
+            System.out.print("Enter the level of the transform: ");
+            int lvl = scanner.nextInt();
             if (wavelet_inverse) {
-              Actual_Matrix = waveletTransform.RHAAR_FWD(Actual_Matrix);
+              int [][][] m = {{{1,2,3,4,5,6,7,8}}};
+              Actual_Matrix = waveletTransform.RHAAR_FWD_LVL(Actual_Matrix, lvl);
               System.out.println("Wavelet Transform applied successfully!");
             } else {
-              Actual_Matrix = waveletTransform.RHAAR_INV(Actual_Matrix);
+              Actual_Matrix = waveletTransform.RHAAR_INV_LVL(Actual_Matrix,lvl);
               System.out.println("Inverse Wavelet Transform applied successfully!");
             }
             break;
