@@ -115,4 +115,68 @@ import static java.lang.Math.abs;
 
       return currentMatrix;
     }
+
+
+    public int[][][] RHAAR_FWD_LVL2(int[][][] matrix, int levels) throws IOException {
+      int numImages = matrix.length;
+      int numRows = matrix[0].length;
+      int numCols = matrix[0][0].length;
+
+      // Copiem la matriu original
+      int[][][] currentMatrix = new int[numImages][numRows][numCols];
+      for (int i = 0; i < numImages; i++) {
+        for (int j = 0; j < numRows; j++) {
+          System.arraycopy(matrix[i][j], 0, currentMatrix[i][j], 0, numCols);
+        }
+      }
+
+      int[][][] tempMatrix = new int[numImages][numRows][numCols];
+      int[][][] output = new int[numImages][numRows][numCols];
+
+      for (int level = 0; level < levels; level++) {
+        int potencia = (int) Math.pow(2, level + 1);
+        int halfRows = numRows / potencia; // Files actives
+        int halfCols = numCols / potencia;// Columnes actives
+
+        int numRows2 = numRows / potencia*2;
+        int numCols2 = numCols / potencia*2;
+
+        // Operació horitzontal (càlcul de promedis i detalls en columnes)
+        for (int i = 0; i < numImages; i++) {
+          for (int j = 0; j < numRows2; j++) {
+            for (int k = 0; k < halfCols; k++) {
+              //int promedio = (currentMatrix[i][j][2 * k] + currentMatrix[i][j][2 * k + 1]) / 2;
+              //int detalle = currentMatrix[i][j][2 * k] + promedio;
+              int w = abs(currentMatrix[i][j][2*k] - currentMatrix[i][j][2*k+1]);
+              int v = (int) (currentMatrix[i][j][2*k] + Math.floor(w/2));
+              tempMatrix[i][j][k] = v;                // Promedios en la izquierda
+              tempMatrix[i][j][k + halfCols] = w;     // Detalles en la derecha
+            }
+          }
+        }
+
+        // Operació vertical (càlcul de promedis i detalls en files)
+        for (int i = 0; i < numImages; i++) {
+          for (int j = 0; j < halfRows; j++) {
+            for (int k = 0; k < numCols2; k++) {
+              //int promedio = (tempMatrix[i][2 * j][k] + tempMatrix[i][2 * j + 1][k]) / 2;
+              //int detalle = tempMatrix[i][2 * j][k] - promedio;
+              int w = abs(currentMatrix[i][2*j][k] - currentMatrix[i][2*j+1][k]);
+              int v = (int) (currentMatrix[i][2*j][k] + Math.floor(w/2));
+
+              output[i][j][k] = v;                // Promedios en la part superior
+              output[i][j + halfRows][k] = w;     // Detalles en la part inferior
+            }
+          }
+        }
+
+        // Actualitzem currentMatrix amb el resultat parcial
+        for (int i = 0; i < numImages; i++) {
+          for (int j = 0; j < numRows; j++) {
+            System.arraycopy(output[i][j], 0, currentMatrix[i][j], 0, numCols);
+          }
+        }
+      }
+      return output;
+    }
 }

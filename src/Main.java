@@ -46,10 +46,11 @@ public class Main {
         System.out.println("2. Quantize/Dequantize");
         System.out.println("3. Apply Predictor/Inverse Predictor");
         System.out.println("4. Apply Wavelet Transform");
-        System.out.println("5. Show metrics");
-        System.out.println("6. Save Image");
-        System.out.println("7. Exit");
-        System.out.print("Enter your choice (1-7): ");
+        System.out.println("5. Zip/Unzip");
+        System.out.println("6. Show metrics");
+        System.out.println("7. Save Image");
+        System.out.println("8. Exit");
+        System.out.print("Enter your choice (1-8): ");
 
         String choice = scanner.nextLine();
 
@@ -100,7 +101,28 @@ public class Main {
             }
             break;
 
+
           case "5":
+            System.out.println("Zip/Unzip (true/false): ");
+            boolean zip = scanner.nextBoolean();
+            scanner.nextLine(); // Consumeix el salt de línia
+            System.out.println("Enter file name (without extension): ");
+            String fileName = scanner.nextLine();
+
+            if (zip) {
+              Zipper.zipFile("./imatges/" + fileName + ".raw", "./imatges/" + fileName + ".zip");
+            } else {
+              try {
+                Zipper.unzipFile("./imatges/" + fileName + ".zip", "./imatges/");
+              } catch (IOException e) {
+                System.out.println("Error unzipping the file: " + e.getMessage());
+              }
+            }
+            break;
+
+
+
+          case "6":
             double mse = MetricsCalculator.calculateMSE(Original_Matrix, Actual_Matrix);
             System.out.println("MSE: " + mse);
             double pae = MetricsCalculator.calculatePAE(Original_Matrix, Actual_Matrix);
@@ -109,7 +131,7 @@ public class Main {
             System.out.println("PSNR: " + psnr);
             break;
 
-          case "6":
+          case "7":
             System.out.println("Enter the name of the file to save the image: ");
             String file_name = scanner.nextLine();
             file_name = "./imatges/" + file_name + ".raw";
@@ -117,7 +139,7 @@ public class Main {
             System.out.println("Image saved successfully: " + saved);
             break;
 
-          case "7":
+          case "8":
             // Exit the program
             System.out.println("Exiting...");
             scanner.close();
@@ -129,4 +151,7 @@ public class Main {
       }
 
     }
+
+
+
   }

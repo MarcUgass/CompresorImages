@@ -1,10 +1,10 @@
-import org.python.util.PythonInterpreter;
-import org.python.core.PyObject;
-import org.python.core.PyString;
-import org.python.core.PyArray;
-import org.python.core.PyInteger;
+//import org.python.util.PythonInterpreter;
+//import org.python.core.PyObject;
+//import org.python.core.PyString;
+//import org.python.core.PyArray;
+//import org.python.core.PyInteger;
 
-
+/*
 public int[][][] Predictor3(String path) {
     try {
         // Importar la clase Python
@@ -52,3 +52,4 @@ private int[][][] convertPyArrayToJava(PyObject pyArray) {
     return result;
 }
 
+ */
