@@ -13,7 +13,8 @@ public class Zipper {
          ZipOutputStream zipOut = new ZipOutputStream(fos);
          FileInputStream fis = new FileInputStream(sourceFile)) {
 
-      ZipEntry zipEntry = new ZipEntry(sourceFile);
+      //ZipEntry zipEntry = new ZipEntry(sourceFile);
+      ZipEntry zipEntry = new ZipEntry(new File(sourceFile).getName());
       zipOut.putNextEntry(zipEntry);
 
       byte[] buffer = new byte[1024];
@@ -32,7 +33,8 @@ public class Zipper {
 
       ZipEntry zipEntry;
       while ((zipEntry = zipIn.getNextEntry()) != null) {
-        File outputFile = new File(outputDir, zipEntry.getName());
+        String fileName = zipEntry.getName();
+        File outputFile = new File(outputDir, fileName);
 
         // Create parent directories if they don't exist
         outputFile.getParentFile().mkdirs();

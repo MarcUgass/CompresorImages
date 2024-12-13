@@ -116,7 +116,6 @@ import static java.lang.Math.abs;
       return currentMatrix;
     }
 
-
     public int[][][] RHAAR_FWD_LVL2(int[][][] matrix, int levels) throws IOException {
       int numImages = matrix.length;
       int numRows = matrix[0].length;
@@ -147,8 +146,8 @@ import static java.lang.Math.abs;
             for (int k = 0; k < halfCols; k++) {
               //int promedio = (currentMatrix[i][j][2 * k] + currentMatrix[i][j][2 * k + 1]) / 2;
               //int detalle = currentMatrix[i][j][2 * k] + promedio;
-              int w = abs(currentMatrix[i][j][2*k] - currentMatrix[i][j][2*k+1]);
-              int v = (int) (currentMatrix[i][j][2*k] + Math.floor(w/2));
+              int w = currentMatrix[i][j][2*k] - currentMatrix[i][j][2*k+1];
+              int v = currentMatrix[i][j][2*k] + (w/2);
               tempMatrix[i][j][k] = v;                // Promedios en la izquierda
               tempMatrix[i][j][k + halfCols] = w;     // Detalles en la derecha
             }
@@ -161,8 +160,8 @@ import static java.lang.Math.abs;
             for (int k = 0; k < numCols2; k++) {
               //int promedio = (tempMatrix[i][2 * j][k] + tempMatrix[i][2 * j + 1][k]) / 2;
               //int detalle = tempMatrix[i][2 * j][k] - promedio;
-              int w = abs(currentMatrix[i][2*j][k] - currentMatrix[i][2*j+1][k]);
-              int v = (int) (currentMatrix[i][2*j][k] + Math.floor(w/2));
+              int w = currentMatrix[i][2*j][k] - currentMatrix[i][2*j+1][k];
+              int v = currentMatrix[i][2*j][k] + (w/2);
 
               output[i][j][k] = v;                // Promedios en la part superior
               output[i][j + halfRows][k] = w;     // Detalles en la part inferior
