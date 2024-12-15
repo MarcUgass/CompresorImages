@@ -24,6 +24,8 @@ public class ImageLoader {
   private int bytesPerSample = 0;
   private boolean isUnsigned = true;
 
+  public ImageLoader(){
+  }
   public ImageLoader(String file_image) {
     String[] parameters_raw = file_image.split("\\.");
     String[] parameters = parameters_raw[1].split("_");
@@ -54,7 +56,7 @@ public class ImageLoader {
     }
 
     //boolean direccion = true; //true = dividir, false = multiplicar
-    String path = "./imatges/" + file_image;
+    String path = "../imatges/" + file_image;
     this.File = new File(path); // Crear un objecte File amb el path
   }
 
@@ -102,6 +104,15 @@ public class ImageLoader {
     return value;
   }
 
+  public void constructor(File file, int width , int height, int components, int bps, boolean isUnsigned){
+    this.File = null;
+    this.rows = height;
+    this.columns = width;
+    this.components = components;
+    this.bytesPerSample = bps;
+    this.isUnsigned = isUnsigned;
+  }
+
   public File getFile() {
     return File;
   }
@@ -127,59 +138,3 @@ public class ImageLoader {
   }
 
 }
-
-/*
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.util.function.Supplier;
-
-public class ImageLoader {
-  /**
-   * Loads an image from a file and stores it in a 3D matrix.
-   * @param file The image file to load.
-   * @param rows Number of rows in the image.
-   * @param columns Number of columns in the image.
-   * @param components Number of components (e.g., RGB).
-   * @param bytesPerSample Size in bytes of each sample (e.g., 1 for byte, 2 for short).
-   * @param isUnsigned Specifies if the values are unsigned.
-   * @return A 3D matrix of the loaded image.
-   * @throws IOException If an error occurs while reading the file.
-   *
-public static int[][][] loadImage(File file, int rows, int columns, int components, int bytesPerSample, boolean isUnsigned) throws IOException {
-  int[][][] matrix = new int[components][rows][columns];
-  byte[] buffer = new byte[rows * columns * components * bytesPerSample];
-
-  // Read the entire file into buffer
-  try (FileInputStream fis = new FileInputStream(file)) {
-    int bytesRead = fis.read(buffer);
-    if (bytesRead != buffer.length) {
-      throw new IOException("File size does not match expected size.");
-    }
-  }
-
-  ByteBuffer byteBuffer = ByteBuffer.wrap(buffer).order(ByteOrder.BIG_ENDIAN);
-
-  // Define the appropriate reader based on bytesPerSample and isUnsigned
-  Supplier<Integer> sampleReader;
-  if (bytesPerSample == 1) {
-    sampleReader = isUnsigned ? () -> Byte.toUnsignedInt(byteBuffer.get()) : byteBuffer::get;
-  } else if (bytesPerSample == 2) {
-    sampleReader = isUnsigned ? () -> Short.toUnsignedInt(byteBuffer.getShort()) : byteBuffer::getShort;
-  } else {
-    throw new IllegalArgumentException("Unsupported bytes per sample: " + bytesPerSample);
-  }
-
-  // Fill the matrix with values from the buffer
-  for (int i = 0; i < components; i++) {
-    for (int j = 0; j < rows; j++) {
-      for (int k = 0; k < columns; k++) {
-        matrix[i][j][k] = sampleReader.get();
-      }
-    }
-  }
-  return matrix;
-}
-}*/
