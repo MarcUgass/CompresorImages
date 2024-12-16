@@ -73,6 +73,7 @@ public class compress {
         else {
             isUnsigned = true;
         }
+
         loader.constructor(file, width, height, components, bytesPerSample, isUnsigned);
         int[][][] matrix = loader.loadImage();
 
@@ -85,17 +86,22 @@ public class compress {
         if (usePredictor) {
             Predictor predictor = new Predictor();
             matrix = predictor.Predcitor2(matrix);
-        }else if (waveletLevel > 0) {
+        }
+        else if (waveletLevel > 0) {
             WaveletTransform wavelet = new WaveletTransform();
             matrix = wavelet.RHAAR_FWD_LVL(matrix, waveletLevel);
         }
 
-        String file_name = "../imatges/" + outputFile;
+        String[] parameters_file= outputFile.split("\\.");
+        String file_name = "../imatges/" + parameters_file[0] + ".zip";
 
-        // Guardar resultado
-        ImageSaver.saveImage(matrix, loader.getBytesPerSample(), loader.isUnsigned(), outputFile);
+        // Generar imagen y Guardar resultado
+        //ImageSaver.saveImage(matrix, loader.getBytesPerSample(), loader.isUnsigned(), file_name);
+        //Zipper.zipFile(file_name, file_name + ".zip");
 
-        Zipper.zipFile(outputFile, outputFile + ".zip");
+        //Generar zip directo
+        ByteBuffer byteBuffer = ImageSaver.getImageBuffer(matrix, bytesPerSample);
+        Zipper.zipBuffer(byteBuffer.array(), file_name, outputFile);
         
     }
 }

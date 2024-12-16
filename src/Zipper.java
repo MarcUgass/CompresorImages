@@ -52,4 +52,18 @@ public class Zipper {
       System.out.println("File unzipped successfully to: " + outputDir);
     }
   }
+
+  public static void zipBuffer(byte[] buffer, String outputFile, String outputImage) throws IOException {
+    try (FileOutputStream fos = new FileOutputStream(outputFile);
+      ZipOutputStream zipOut = new ZipOutputStream(fos)){
+
+        ZipEntry zipEntry = new ZipEntry(outputImage);
+        zipOut.putNextEntry(zipEntry);
+        
+        zipOut.write(buffer);
+
+        System.out.println("File compressed successfully to: " + outputFile);
+      }
+
+  }
 }

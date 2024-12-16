@@ -37,4 +37,25 @@ public class ImageSaver {
 
     return new File(path).exists();
   }
+
+  public static ByteBuffer getImageBuffer(int[][][] matrix, int bytesPerSample){
+    ByteBuffer byteBuffer = ByteBuffer.allocate(matrix.length * matrix[0].length * matrix[0][0].length * bytesPerSample);
+    byteBuffer.order(ByteOrder.BIG_ENDIAN);
+
+    // Iterate over the matrix and store values in the buffer
+    for (int[][] component : matrix) {
+      for (int[] row : component) {
+        for (int value : row) {
+          if (bytesPerSample == 1) {
+            byteBuffer.put((byte) value);
+          } else if (bytesPerSample == 2) {
+            byteBuffer.putShort((short) value);
+          }
+        }
+      }
+    }
+
+    return byteBuffer;    
+  }
+
 }

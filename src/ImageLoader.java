@@ -105,7 +105,7 @@ public class ImageLoader {
   }
 
   public void constructor(File file, int width , int height, int components, int bps, boolean isUnsigned){
-    this.File = null;
+    this.File = file;
     this.rows = height;
     this.columns = width;
     this.components = components;

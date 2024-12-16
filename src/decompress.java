@@ -4,12 +4,17 @@ import java.io.IOException;
 public class decompress {
     public static void main(String[] args) throws IOException {
         if (args.length < 2) {
-            System.out.println("Uso: decompress -i input.zip -o output.raw [-q factor] [[-wt nivel] / [-p]]");
+            System.out.println("Uso: decompress -i input.zip Ancho Alto Imagenes Formato -o output.raw [-q factor] [[-wt nivel] / [-p]]");
             return;
         }
 
         String inputFile = null;
         String outputFile = null;
+        
+        int width = 0, height = 0, components = 0, format = 0;
+
+        int bytesPerSample = 0;
+        boolean isUnsigned = true;
 
         int quantizationFactor = 0;
         int waveletLevel = 0;
@@ -20,6 +25,10 @@ public class decompress {
             switch (args[i]) {
                 case "-i":
                     inputFile = args[++i];
+                    width = Integer.parseInt(args[++i]);
+                    height = Integer.parseInt(args[++i]);
+                    components = Integer.parseInt(args[++i]);
+                    format = Integer.parseInt(args[++i]);
                     break;
                 case "-o":
                     outputFile = args[++i];
@@ -41,9 +50,28 @@ public class decompress {
             return;
         }
 
+        //1-> 8 bits
+        if (format == 1) {
+            bytesPerSample = 1;
+            isUnsigned = true;
+        }
+        //2-> 16 bits unsigned
+        else if (format == 2) {
+            bytesPerSample = 2;
+            isUnsigned = true;
+        }
+        //3-> 16 bits signed
+        else if (format == 3) {
+            bytesPerSample = 2;
+            isUnsigned = false;
+        }
+        else {
+            isUnsigned = true;
+        }
+
         // Ruta de trabajo
         String zipFilePath = "../imatges/" + inputFile;
-        String tempRawFilePath = zipFilePath.replace(".zip", "_temp.raw");
+        String tempRawFilePath = zipFilePath.replace(".zip", ".raw"); //"_temp.raw");
 
         // Descomprimir el archivo ZIP
         Zipper.unzipFile(zipFilePath, "../imatges");
@@ -51,17 +79,12 @@ public class decompress {
         // Cargar imagen
         ImageLoader loader = new ImageLoader();
         File rawFile = new File(tempRawFilePath);
+        
         if (!rawFile.exists()) {
             System.err.println("Error: No se pudo descomprimir el archivo RAW del ZIP.");
             return;
         }
-
-        // Leer metadatos (ajustar parámetros según sea necesario)
-        int width = 512; // TODO: Obtener desde los parámetros si es posible
-        int height = 512; // TODO: Obtener desde los parámetros si es posible
-        int components = 3; // TODO: Obtener desde los parámetros si es posible
-        int bytesPerSample = 1; // TODO: Ajustar según formato del archivo
-        boolean isUnsigned = true; // TODO: Ajustar según formato del archivo
+        
 
         loader.constructor(rawFile, width, height, components, bytesPerSample, isUnsigned);
         int[][][] matrix = loader.loadImage();
@@ -69,7 +92,7 @@ public class decompress {
         // Deshacer predicción o transformada wavelet
         if (usePredictor) {
             Predictor predictor = new Predictor();
-            matrix = predictor.inversePredictor(matrix);
+            matrix = predictor.InversePredictor2(matrix);
         } else if (waveletLevel > 0) {
             WaveletTransform wavelet = new WaveletTransform();
             matrix = wavelet.RHAAR_INV_LVL(matrix, waveletLevel);
