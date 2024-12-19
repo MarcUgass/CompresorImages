@@ -37,7 +37,7 @@ java compress -i input.raw Ancho Alto Imagenes Formato -o output.raw [-q factor]
 ```
 #### Ejemplo:
 ```bash
-java compress n1_GRAY.1_2560_2048_1_0_8_0_0_0.raw 2048 2560 1 1 output.raw -q 3 -wt 3
+java compress n1_GRAY.1_2560_2048_1_0_8_0_0_0.raw 2048 2560 1 1 -o output.raw -q 3 -wt 3
 ```
 
 ### 3. Descomprimir Archivos
