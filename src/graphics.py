@@ -1,56 +1,63 @@
 import sys
 import matplotlib.pyplot as plt
 import argparse
+import os
 
 def plot_psnr(data, quantization, method, output_file):
-    # Prepare los datos para la gráfica
+    # Preparar els valors per la gràfica
     psnr_values = []
-    image_indices = list(range(1, len(data) + 1))  # Eje X: índices de las imágenes (enteros)
+    image_indices = list(range(1, len(data) + 1))  # Eix X: índex de les imatges (enteros)
 
-    # Parsear los datos (valores PSNR)
+    # Parsejar els valors PSNR
     for psnr in data:
         psnr_values.append(float(psnr))
 
-    # Crear la figura para la gráfica
+    # Crear la figura per la gràfica
     plt.figure(figsize=(10, 6))
 
-    # Graficar los valores PSNR como puntos dispersos (scatter plot)
+    # Graficar els valors PSNR com a punts dispersos
     plt.scatter(image_indices, psnr_values, c='b', marker='o', label=f'PSNR (Q={quantization})')
 
-    # Etiquetas
-    plt.title(f'PSNR para diferentes imágenes ({method} con Q={quantization})')
-    plt.xlabel('Índice de la Imagen')
+    # Etiquetes
+    plt.title(f'PSNR per diferents imatges ({method} amb Q={quantization})')
+    plt.xlabel('Índex de la Imatge')
     plt.ylabel('Valor PSNR')
 
-    # Asegurar que los valores del eje X sean enteros
+    # Assegurar que els valors de l'eix X siguin enters
     plt.xticks(image_indices)
 
-    # Añadir leyenda
+    # Afegir llegenda
     plt.legend()
 
-    # Guardar la gráfica como imagen
+    # Crear el directori 'reports' si no existeix
+    output_dir = os.path.join(os.path.dirname(__file__), '..', 'reports')
+    os.makedirs(output_dir, exist_ok=True)
+
+    # Guardar la gràfica com a imatge a 'reports'
+    output_path = os.path.join(output_dir, output_file)
     plt.tight_layout()
-    plt.savefig(output_file)  # Guarda la imagen en el archivo especificado
-    print(f"Gráfico guardado en: {output_file}")
+    plt.savefig(output_path)  # Guarda el fitxer a la ruta especificada
+    print(f"Gràfic guardat a: {output_path}")
 
 if __name__ == "__main__":
-    # Configurar argparse para gestionar los argumentos de la línea de comandos
-    parser = argparse.ArgumentParser(description="Generar gráfica PSNR de métodos de compresión")
-    parser.add_argument('-q', type=int, default=2, help="Paso de cuantización, por defecto 2 si no se especifica")
-    parser.add_argument('-wt', action='store_true', help="Usar wavelet (si no, se usará predictor)")
+    # Configurar argparse per gestionar els arguments de la línia de comandes
+    parser = argparse.ArgumentParser(description="Generar gràfica PSNR de mètodes de compressió")
+    parser.add_argument('-q', type=int, default=2, help="Pas de quantització, per defecte 2 si no es especifica")
+    parser.add_argument('-wt', action='store_true', help="Usar wavelet (si no, es farà servir predictor)")
     parser.add_argument('-p', action='store_true', help="Usar predictor")
-    parser.add_argument('psnr_values', nargs='+', help="Lista de valores PSNR")
-    parser.add_argument('output_file', help="Archivo de salida para guardar la gráfica")
+    parser.add_argument('psnr_values', nargs='+', help="Llista de valors PSNR")
+    parser.add_argument('output_file', help="Nom del fitxer de sortida per guardar la gràfica")
 
     args = parser.parse_args()
 
-    # Determinar el método basado en los flags -wt y -p
-    method = 'wavelet' if args.wt else 'predictor' if args.p else 'desconocido'
+    # Determinar el mètode basat en els flags -wt i -p
+    method = 'wavelet' if args.wt else 'predictor' if args.p else 'desconegut'
 
-    # Comprobar que haya un método seleccionado
-    if method == 'desconocido':
-        print("Error: Debe especificar un método usando -wt para wavelet o -p para predictor.")
+    # Comprovar que hi hagi un mètode seleccionat
+    if method == 'desconegut':
+        print("Error: Cal especificar un mètode usant -wt per wavelet o -p per predictor.")
         sys.exit(1)
 
-    # Llamar a la función para generar la gráfica
+    # Cridar la funció per generar la gràfica
     plot_psnr(args.psnr_values, args.q, method, args.output_file)
+
