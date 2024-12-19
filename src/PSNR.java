@@ -10,8 +10,8 @@ public class PSNR {
             System.exit(1); // Código de error
         }
 
-        String inputFile1 = args[0];
-        String inputFile2 = args[1];
+        String inputFile1 = "../imatges/"+ args[0];
+        String inputFile2 = "../imatges/" + args[1];
 
         try {
             byte[] image1 = loadImage(inputFile1);
