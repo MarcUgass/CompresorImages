@@ -42,7 +42,7 @@ def plot_psnr(data, quantization, method, output_file):
 if __name__ == "__main__":
     # Configurar argparse per gestionar els arguments de la línia de comandes
     parser = argparse.ArgumentParser(description="Generar gràfica PSNR de mètodes de compressió")
-    parser.add_argument('-q', type=int, default=2, help="Pas de quantització, per defecte 2 si no es especifica")
+    parser.add_argument('-q', type=float, default=2, help="Pas de quantització, per defecte 2 si no es especifica")
     parser.add_argument('-wt', action='store_true', help="Usar wavelet (si no, es farà servir predictor)")
     parser.add_argument('-p', action='store_true', help="Usar predictor")
     parser.add_argument('psnr_values', nargs='+', help="Llista de valors PSNR")
@@ -60,4 +60,3 @@ if __name__ == "__main__":
 
     # Cridar la funció per generar la gràfica
     plot_psnr(args.psnr_values, args.q, method, args.output_file)
-
