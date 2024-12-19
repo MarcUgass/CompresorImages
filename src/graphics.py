@@ -1,39 +1,29 @@
 import sys
 import matplotlib.pyplot as plt
 import argparse
-from matplotlib import colors
 
 def plot_psnr(data, quantization, method, output_file):
     # Prepare los datos para la gráfica
-    methods = []
     psnr_values = []
-    quantization_steps = []
-
-    # Mapa para convertir los pasos de cuantización en valores numericos para colores
-    quantization_value = float(quantization)  # Convertir cuantización a un valor numérico
-    quantization_steps = [quantization_value] * len(data)
+    image_indices = list(range(1, len(data) + 1))  # Eje X: índices de las imágenes
 
     # Parsear los datos (valores PSNR)
     for psnr in data:
-        methods.append(method)
         psnr_values.append(float(psnr))
 
     # Crear la figura para la gráfica
     plt.figure(figsize=(10, 6))
 
-    # Utilizar Normalizer para asegurarnos de que los valores de color estén en el rango 0-1
-    norm = colors.Normalize(vmin=min(quantization_steps), vmax=max(quantization_steps))
-
-    # Crear gráficos por cada valor de PSNR basado en los métodos y pasos de cuantización
-    scatter = plt.scatter(methods, psnr_values, c=quantization_steps, cmap='viridis', norm=norm, label='PSNR values')
+    # Graficar los valores PSNR
+    plt.plot(image_indices, psnr_values, marker='o', linestyle='-', color='b', label=f'PSNR (Q={quantization})')
 
     # Etiquetas
-    plt.title('PSNR para diferentes métodos de compresión')
-    plt.xlabel('Métodos')
+    plt.title(f'PSNR para diferentes imágenes ({method} con Q={quantization})')
+    plt.xlabel('Índice de la Imagen')
     plt.ylabel('Valor PSNR')
-    
-    # Añadir una barra de colores
-    plt.colorbar(scatter, label='Paso de cuantización')
+
+    # Añadir leyenda
+    plt.legend()
 
     # Guardar la gráfica como imagen
     plt.tight_layout()
@@ -43,7 +33,7 @@ def plot_psnr(data, quantization, method, output_file):
 if __name__ == "__main__":
     # Configurar argparse para gestionar los argumentos de la línea de comandos
     parser = argparse.ArgumentParser(description="Generar gráfica PSNR de métodos de compresión")
-    parser.add_argument('-q', type=int, required=True, help="Paso de cuantización")
+    parser.add_argument('-q', type=int, default=2, help="Paso de cuantización, por defecto 2 si no se especifica")
     parser.add_argument('-wt', action='store_true', help="Usar wavelet (si no, se usará predictor)")
     parser.add_argument('-p', action='store_true', help="Usar predictor")
     parser.add_argument('psnr_values', nargs='+', help="Lista de valores PSNR")
