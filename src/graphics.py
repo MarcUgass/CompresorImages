@@ -1,7 +1,7 @@
 import sys
 import matplotlib.pyplot as plt
 
-def plot_psnr(data):
+def plot_psnr(data, output_file):
     # Prepare los datos para la gráfica
     methods = []
     psnr_values = []
@@ -28,15 +28,17 @@ def plot_psnr(data):
     # Añadir una barra de colores
     plt.colorbar(scatter, label='Paso de cuantización')
 
-    # Mostrar la gráfica
+    # Guardar la gráfica como imagen
     plt.tight_layout()
-    plt.show()
+    plt.savefig(output_file)  # Guarda la imagen en el archivo especificado
+    print(f"Gráfico guardado en: {output_file}")
 
 if __name__ == "__main__":
     # Leer los datos desde el comando Bash
     data = sys.argv[1:]
+    output_file = sys.argv[-1]  # Tomar el último argumento como el nombre del archivo de salida
 
-    if data:
-        plot_psnr(data)
+    if data and output_file:
+        plot_psnr(data, output_file)
     else:
-        print("Por favor, pase los datos de PSNR como argumentos de línea de comando.")
+        print("Por favor, pase los datos de PSNR y el nombre de archivo de salida.")
