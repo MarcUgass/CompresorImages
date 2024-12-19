@@ -19,11 +19,10 @@ public class compress {
         int bytesPerSample = 0;
         boolean isUnsigned = true;
 
-        int quantizationFactor = 0;
+        float quantizationFactor = 0.0f;  // Cambiat a float
         int waveletLevel = 0;
         boolean usePredictor = false;
         File file = null;
-        //boolean useZip = false;
 
         // Procesar argumentos
         for (int i = 0; i < args.length; i++) {
@@ -39,7 +38,7 @@ public class compress {
                     outputFile = args[++i];
                     break;
                 case "-q":
-                    quantizationFactor = Integer.parseInt(args[++i]);
+                    quantizationFactor = Float.parseFloat(args[++i]);  // Usant Float.parseFloat
                     break;
                 case "-wt":
                     waveletLevel = Integer.parseInt(args[++i]);
@@ -49,7 +48,13 @@ public class compress {
                     break;
             }
         }
-        
+
+        // Validar quantizationFactor
+        if (quantizationFactor <= 0) {
+            System.out.println("El factor de quantització ha de ser un número positiu.");
+            return;
+        }
+
         // Cargar imagen
         ImageLoader loader = new ImageLoader();
         String path = "../imatges/" + inputFile;
@@ -79,7 +84,7 @@ public class compress {
 
         //Si hay quantización se aplica
         if (quantizationFactor > 0) {
-            matrix = Quantizer.quantize(matrix, quantizationFactor, true);
+            matrix = Quantizer.quantize(matrix, (int)quantizationFactor, true);  // Passant a enter si cal
         }
 
         // Aplicar transformaciones en orden
@@ -96,12 +101,8 @@ public class compress {
         String file_name = "../imatges/" + parameters_file[0] + ".zip";
 
         // Generar imagen y Guardar resultado
-        //ImageSaver.saveImage(matrix, loader.getBytesPerSample(), loader.isUnsigned(), file_name);
-        //Zipper.zipFile(file_name, file_name + ".zip");
-
-        //Generar zip directo
         ByteBuffer byteBuffer = ImageSaver.getImageBuffer(matrix, bytesPerSample);
         Zipper.zipBuffer(byteBuffer.array(), file_name, outputFile);
-        
     }
 }
+

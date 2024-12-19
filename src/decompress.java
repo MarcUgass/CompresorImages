@@ -16,7 +16,7 @@ public class decompress {
         int bytesPerSample = 0;
         boolean isUnsigned = true;
 
-        int quantizationFactor = 0;
+        float quantizationFactor = 0.0f;  // Cambiat a float
         int waveletLevel = 0;
         boolean usePredictor = false;
 
@@ -34,7 +34,7 @@ public class decompress {
                     outputFile = args[++i];
                     break;
                 case "-q":
-                    quantizationFactor = Integer.parseInt(args[++i]);
+                    quantizationFactor = Float.parseFloat(args[++i]);  // Usant Float.parseFloat()
                     break;
                 case "-wt":
                     waveletLevel = Integer.parseInt(args[++i]);
@@ -45,8 +45,9 @@ public class decompress {
             }
         }
 
-        if (inputFile == null || outputFile == null) {
-            System.err.println("Error: Debes especificar un archivo de entrada y salida.");
+        // Comprovar si els arxius són vàlids
+        if (inputFile == null || inputFile.isEmpty() || outputFile == null || outputFile.isEmpty()) {
+            System.err.println("Error: Debes especificar un archivo de entrada y salida válidos.");
             return;
         }
 
@@ -71,10 +72,15 @@ public class decompress {
 
         // Ruta de trabajo
         String zipFilePath = "../imatges/" + inputFile;
-        String tempRawFilePath = zipFilePath.replace(".zip", ".raw"); //"_temp.raw");
+        String tempRawFilePath = zipFilePath.replace(".zip", ".raw");
 
         // Descomprimir el archivo ZIP
-        Zipper.unzipFile(zipFilePath, "../imatges");
+        try {
+            Zipper.unzipFile(zipFilePath, "../imatges");
+        } catch (IOException e) {
+            System.err.println("Error al descomprimir el archivo ZIP: " + e.getMessage());
+            return;
+        }
 
         // Cargar imagen
         ImageLoader loader = new ImageLoader();
@@ -84,7 +90,6 @@ public class decompress {
             System.err.println("Error: No se pudo descomprimir el archivo RAW del ZIP.");
             return;
         }
-        
 
         loader.constructor(rawFile, width, height, components, bytesPerSample, isUnsigned);
         int[][][] matrix = loader.loadImage();
@@ -100,7 +105,7 @@ public class decompress {
 
         // Deshacer cuantización
         if (quantizationFactor > 0) {
-            matrix = Quantizer.quantize(matrix, quantizationFactor, false);
+            matrix = Quantizer.quantize(matrix, (int)quantizationFactor, false);
         }
 
         // Guardar la imagen descomprimida
@@ -116,3 +121,4 @@ public class decompress {
         System.out.println("Proceso de descompresión finalizado con éxito.");
     }
 }
+
