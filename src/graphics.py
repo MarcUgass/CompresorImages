@@ -5,7 +5,7 @@ import argparse
 def plot_psnr(data, quantization, method, output_file):
     # Prepare los datos para la gráfica
     psnr_values = []
-    image_indices = list(range(1, len(data) + 1))  # Eje X: índices de las imágenes
+    image_indices = list(range(1, len(data) + 1))  # Eje X: índices de las imágenes (enteros)
 
     # Parsear los datos (valores PSNR)
     for psnr in data:
@@ -14,13 +14,16 @@ def plot_psnr(data, quantization, method, output_file):
     # Crear la figura para la gráfica
     plt.figure(figsize=(10, 6))
 
-    # Graficar los valores PSNR
-    plt.plot(image_indices, psnr_values, marker='o', linestyle='-', color='b', label=f'PSNR (Q={quantization})')
+    # Graficar los valores PSNR como puntos dispersos (scatter plot)
+    plt.scatter(image_indices, psnr_values, c='b', marker='o', label=f'PSNR (Q={quantization})')
 
     # Etiquetas
     plt.title(f'PSNR para diferentes imágenes ({method} con Q={quantization})')
     plt.xlabel('Índice de la Imagen')
     plt.ylabel('Valor PSNR')
+
+    # Asegurar que los valores del eje X sean enteros
+    plt.xticks(image_indices)
 
     # Añadir leyenda
     plt.legend()
