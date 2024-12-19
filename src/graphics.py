@@ -1,6 +1,7 @@
 import sys
 import matplotlib.pyplot as plt
 import argparse
+from matplotlib import colors
 
 def plot_psnr(data, quantization, method, output_file):
     # Prepare los datos para la gráfica
@@ -8,17 +9,23 @@ def plot_psnr(data, quantization, method, output_file):
     psnr_values = []
     quantization_steps = []
 
-    # Parsear los datos
+    # Mapa para convertir los pasos de cuantización en valores numericos para colores
+    quantization_value = float(quantization)  # Convertir cuantización a un valor numérico
+    quantization_steps = [quantization_value] * len(data)
+
+    # Parsear los datos (valores PSNR)
     for psnr in data:
         methods.append(method)
-        quantization_steps.append(str(quantization))  # convertir a string para el color
         psnr_values.append(float(psnr))
 
     # Crear la figura para la gráfica
     plt.figure(figsize=(10, 6))
 
+    # Utilizar Normalizer para asegurarnos de que los valores de color estén en el rango 0-1
+    norm = colors.Normalize(vmin=min(quantization_steps), vmax=max(quantization_steps))
+
     # Crear gráficos por cada valor de PSNR basado en los métodos y pasos de cuantización
-    scatter = plt.scatter(methods, psnr_values, c=quantization_steps, cmap='viridis', label='PSNR values')
+    scatter = plt.scatter(methods, psnr_values, c=quantization_steps, cmap='viridis', norm=norm, label='PSNR values')
 
     # Etiquetas
     plt.title('PSNR para diferentes métodos de compresión')
