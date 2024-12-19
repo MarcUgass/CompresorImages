@@ -50,3 +50,43 @@ java decompress -i input.zip Ancho Alto Imagenes Formato -o output.raw [-q facto
 java decompress -i output.zip 2048 2560 1 1 -o copia_orignial.raw -q 3 -wt 3
 ```
 
+### **4. Calcular PSNR**
+Calcula el valor de PSNR entre dos imágenes crudas (`.raw`). Para ejecutar este cálculo:
+```bash
+java PSNR input1.raw input2.raw
+```
+El resultado es el valor de PSNR mostrado en la salida estándar.
+
+Script sencillo de uso:
+
+```bash
+#!/bin/bash
+
+# Ejecutar el cálculo de PSNR
+psnr=$(java PSNR input1.raw outputDir/input2.raw)
+
+# Mostrar el valor calculado
+echo "El valor del PSNR es: $psnr"
+```
+
+### Ejemplo completo de script
+Puedes combinar las funciones de compresión, descompresión y cálculo de PSNR en un único flujo:
+```bash
+#!/bin/bash
+
+# Paso 1: Comprimir archivos
+java Compress input1.raw input2.raw compressed.zip
+
+# Paso 2: Descomprimir archivos
+java Decompress compressed.zip outputDir
+
+# Paso 3: Calcular PSNR
+psnr=$(java PSNR input1.raw outputDir/input2.raw)
+
+echo "El valor del PSNR es: $psnr"
+```
+
+Este script ejecuta las tres fases automáticamente y es ideal para integraciones en pipelines automatizados.
+
+---
+
