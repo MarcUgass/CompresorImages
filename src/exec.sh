@@ -38,6 +38,11 @@ psnr7=$(java PSNR n1_RGB.3_2560_2048_1_0_8_0_0_0.raw imatge_q1_5_wt2_n7.raw)
 # Generar gràfica
 python3 graphics.py -q 1.5 -wt 2 $psnr1 $psnr2 $psnr3 $psnr4 $psnr5 $psnr6 $psnr7 report_q1_5_wt2.png
 
+# Calcular la media de los valores PSNR
+psnr_mean_1_5wt=$(echo "scale=2; ($psnr1 + $psnr2 + $psnr3 + $psnr4 + $psnr5 + $psnr6 + $psnr7) / 7" | bc)
+
+# Mostrar el resultado
+echo "Mitjana:" $psnr_mean_1_5wt
 
 
 
@@ -73,7 +78,11 @@ psnr7=$(java PSNR n1_RGB.3_2560_2048_1_0_8_0_0_0.raw imatge_q1_5_p_n7.raw)
 # Generar gràfica
 python3 graphics.py -q 1.5 -p $psnr1 $psnr2 $psnr3 $psnr4 $psnr5 $psnr6 $psnr7 report_q1_5_p.png
 
+# Calcular la media de los valores PSNR
+psnr_mean_1_5p=$(echo "scale=2; ($psnr1 + $psnr2 + $psnr3 + $psnr4 + $psnr5 + $psnr6 + $psnr7) / 7" | bc)
 
+# Mostrar el resultado
+echo "Mitjana:" $psnr_mean_1_5p
 
 
 ####################Q2 WT 2####################
@@ -128,6 +137,11 @@ psnr7=$(java PSNR n1_RGB.3_2560_2048_1_0_8_0_0_0.raw imatge_q2_wt2_n7.raw)
 python3 graphics.py -q 2 -wt $psnr1 $psnr2 $psnr3 $psnr4 $psnr5 $psnr6 $psnr7 report_q2_wt2.png
 
 
+# Calcular la media de los valores PSNR
+psnr_mean_2wt=$(echo "scale=2; ($psnr1 + $psnr2 + $psnr3 + $psnr4 + $psnr5 + $psnr6 + $psnr7) / 7" | bc)
+
+# Mostrar el resultado
+echo "Mitjana:" $psnr_mean_2wt
 
 ####################Q2 P####################
 
@@ -182,7 +196,11 @@ psnr7=$(java PSNR n1_RGB.3_2560_2048_1_0_8_0_0_0.raw imatge_q2_p_n7.raw)
 python3 graphics.py -q 2 -p $psnr1 $psnr2 $psnr3 $psnr4 $psnr5 $psnr6 $psnr7 report_q2_p.png
 
 
+# Calcular la media de los valores PSNR
+psnr_mean_2p=$(echo "scale=2; ($psnr1 + $psnr2 + $psnr3 + $psnr4 + $psnr5 + $psnr6 + $psnr7) / 7" | bc)
 
+# Mostrar el resultado
+echo "Mitjana:" $psnr_mean_2p
 
 ####################Q2.5 WT 2####################
 
@@ -217,7 +235,11 @@ psnr7=$(java PSNR n1_RGB.3_2560_2048_1_0_8_0_0_0.raw imatge_q2_5_wt2_n7.raw)
 python3 graphics.py -q 2.5 -wt $psnr1 $psnr2 $psnr3 $psnr4 $psnr5 $psnr6 $psnr7 report_q2_5_wt2.png
 
 
+# Calcular la media de los valores PSNR
+psnr_mean_2_5wt=$(echo "scale=2; ($psnr1 + $psnr2 + $psnr3 + $psnr4 + $psnr5 + $psnr6 + $psnr7) / 7" | bc)
 
+# Mostrar el resultado
+echo "Mitjana:" $psnr_mean_2_5wt
 
 
 
@@ -254,7 +276,11 @@ psnr7=$(java PSNR n1_RGB.3_2560_2048_1_0_8_0_0_0.raw imatge_q2_5_p_n7.raw)
 python3 graphics.py -q 2.5 -p $psnr1 $psnr2 $psnr3 $psnr4 $psnr5 $psnr6 $psnr7 report_q2_5_p.png
 
 
+# Calcular la media de los valores PSNR
+psnr_mean_2_5p=$(echo "scale=2; ($psnr1 + $psnr2 + $psnr3 + $psnr4 + $psnr5 + $psnr6 + $psnr7) / 7" | bc)
 
+# Mostrar el resultado
+echo "Mitjana:" $psnr_mean_2_5p
 
 ####################Q3 WT 2####################
 
@@ -287,6 +313,12 @@ psnr7=$(java PSNR n1_RGB.3_2560_2048_1_0_8_0_0_0.raw imatge_q3_wt2_n7.raw)
 
 # Generar gràfica
 python3 graphics.py -q 3 -wt 2 $psnr1 $psnr2 $psnr3 $psnr4 $psnr5 $psnr6 $psnr7 report_q3_wt2.png
+
+# Calcular la media de los valores PSNR
+psnr_mean_3wt=$(echo "scale=2; ($psnr1 + $psnr2 + $psnr3 + $psnr4 + $psnr5 + $psnr6 + $psnr7) / 7" | bc)
+
+# Mostrar el resultado
+echo "Mitjana:" $psnr_mean_3wt
 
 
 
@@ -322,7 +354,11 @@ psnr7=$(java PSNR n1_RGB.3_2560_2048_1_0_8_0_0_0.raw imatge_q3_p_n7.raw)
 # Generar gràfica
 python3 graphics.py -q 3 -p $psnr1 $psnr2 $psnr3 $psnr4 $psnr5 $psnr6 $psnr7 report_q3_p.png
 
+# Calcular la media de los valores PSNR
+psnr_mean_3p=$(echo "scale=2; ($psnr1 + $psnr2 + $psnr3 + $psnr4 + $psnr5 + $psnr6 + $psnr7) / 7" | bc)
 
+# Mostrar el resultado
+echo "Mitjana:" $psnr_mean_3p
 
 
 ####################Q3.5 WT 2####################
@@ -357,7 +393,8 @@ psnr7=$(java PSNR n1_RGB.3_2560_2048_1_0_8_0_0_0.raw imatge_q3_5_wt2_n7.raw)
 # Generar gràfica
 python3 graphics.py -q 3.5 -wt $psnr1 $psnr2 $psnr3 $psnr4 $psnr5 $psnr6 $psnr7 report_q3_5_wt2.png
 
-
+# Calcular la media de los valores PSNR
+psnr_mean_3_5wt=$(echo "scale=2; ($psnr1 + $psnr2 + $psnr3 + $psnr4 + $psnr5 + $psnr6 + $psnr7) / 7" | bc)
 
 
 ####################Q3.5 P####################
@@ -392,7 +429,11 @@ psnr7=$(java PSNR n1_RGB.3_2560_2048_1_0_8_0_0_0.raw imatge_q3_5_p_n7.raw)
 # Generar gràfica
 python3 graphics.py -q 3.5 -p $psnr1 $psnr2 $psnr3 $psnr4 $psnr5 $psnr6 $psnr7 report_q3_5_p.png
 
+# Calcular la media de los valores PSNR
+psnr_mean_3_5p=$(echo "scale=2; ($psnr1 + $psnr2 + $psnr3 + $psnr4 + $psnr5 + $psnr6 + $psnr7) / 7" | bc)
 
+# Mostrar el resultado
+echo "Mitjana:" $psnr_mean_3_5p
 
 
 ####################Q4 WT 2####################
@@ -427,7 +468,10 @@ psnr7=$(java PSNR n1_RGB.3_2560_2048_1_0_8_0_0_0.raw imatge_q4_wt2_n7.raw)
 # Generar gràfica
 python3 graphics.py -q 4 -wt $psnr1 $psnr2 $psnr3 $psnr4 $psnr5 $psnr6 $psnr7 report_q4_wt2.png
 
+# Calcular la media de los valores PSNR
+psnr_mean_4wt=$(echo "scale=2; ($psnr1 + $psnr2 + $psnr3 + $psnr4 + $psnr5 + $psnr6 + $psnr7) / 7" | bc)
 
+python3 graphics_means.py $psnr_mean_1_5wt $psnr_mean_2wt $psnr_mean_2_5wt $psnr_mean_3wt $psnr_mean_3_5wt $psnr_mean_4wt quantization_wt.png --quantization_steps 1.5 2 2.5 3 3.5 4
 
 
 ####################Q4 P####################
@@ -459,8 +503,17 @@ psnr5=$(java PSNR mamo_1.1_3576_2944_2_0_12_0_0_0.raw imatge_q4_p_n5.raw)
 psnr6=$(java PSNR n1_GRAY.1_2560_2048_1_0_8_0_0_0.raw imatge_q4_p_n6.raw)
 psnr7=$(java PSNR n1_RGB.3_2560_2048_1_0_8_0_0_0.raw imatge_q4_p_n7.raw)
 
+# Calcular la media de los valores PSNR
+psnr_mean_4p=$(echo "scale=2; ($psnr1 + $psnr2 + $psnr3 + $psnr4 + $psnr5 + $psnr6 + $psnr7) / 7" | bc)
+
+# Mostrar el resultado
+echo "Mitjana:" $psnr_mean_4p
+
 # Generar gràfica
 python3 graphics.py -q 4 -p $psnr1 $psnr2 $psnr3 $psnr4 $psnr5 $psnr6 $psnr7 report_q4_p.png
+
+python3 graphics_means.py $psnr_mean_2p $psnr_mean_2p $psnr_mean_2_5p $psnr_mean_3p $psnr_mean_3_5p $psnr_mean_4p quantization_p.png --quantization_steps 1.5 2 2.5 3 3.5 4
+
 
 
 # Emmagatzemar el temps final

@@ -1,6 +1,7 @@
 import sys
 import matplotlib.pyplot as plt
 import argparse
+import os
 
 def plot_psnr_means(data, quantization_steps, output_file):
     # Parsear las entradas de PSNR y pasos de cuantización
@@ -25,10 +26,15 @@ def plot_psnr_means(data, quantization_steps, output_file):
     # Añadir leyenda
     plt.legend()
 
-    # Guardar la gráfica como imagen
+# Crear el directori 'reports' si no existeix
+    output_dir = os.path.join(os.path.dirname(__file__), '..', 'average')
+    os.makedirs(output_dir, exist_ok=True)
+
+    # Guardar la gràfica com a imatge a 'reports'
+    output_path = os.path.join(output_dir, output_file)
     plt.tight_layout()
-    plt.savefig(output_file)  # Guarda la imagen en el archivo especificado
-    print(f"Gráfico guardado en: {output_file}")
+    plt.savefig(output_path)  # Guarda el fitxer a la ruta especificada
+    print(f"Gràfic guardat a: {output_path}")
 
 if __name__ == "__main__":
     # Configurar argparse para gestionar los argumentos de la línea de comandos
